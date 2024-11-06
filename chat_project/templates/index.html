@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <textarea cols="100" rows="20" id="chat-log"></textarea><br>
+    <input type="text" id="chat-message-input" size="100"><br>
+    <input type="button" value="send" id="chat-message-submit">
+    
+    <script>
+        var ws = new WebSocket("ws://127.0.0.1:8000/ws/sc");
+        ws.onopen = function(event){
+            console.log('connected');
+            // ws.send('hi this message from client')
+            
+        }
+        ws.onmessage = function(event){
+            console.log('message received by server'); 
+            //jo bhi data server bhejete vo isme dikhega
+            // document.getElementById("cd").innerHTML += event.data
+            var data1 = JSON.parse(event.data);
+            console.log(data1);
+            document.querySelector('#chat-log').value += (data1.msg + "\n")
+            
+            // console.log(data1);
+            
+            
+            
+            
+            
+        }
+        ws.onerror = function(event){
+            console.log('error received by server',event);
+            
+        }
+        ws.onclose = function(event){
+            console.log('connection closed',event);
+            
+        }
+        document.getElementById('chat-message-submit').onclick = function(event){
+            const messageInputDom = document.getElementById('chat-message-input')
+            const mssg = messageInputDom.value 
+            ws.send(JSON.stringify({
+                'msg':mssg //ye data string me hi jaega
+            }))
+            messageInputDom.value = ''
+        }
+        // using addEventListener
+        // ws.addEventListener('open',()=>{
+        //     console.log('connected');
+        //     ws.send('hi this message from client')
+            
+        // })
+    </script>
+</body>
+</html>
